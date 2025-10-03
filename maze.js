@@ -10,7 +10,7 @@ var goalPosition=[0,0,0,0];
 var goalijkh=[0,0,0,0];
 const algorithm="boutaoshi";
 const kagi={
-    amount:1,
+    amount:5,
     value:0,
     list:[]
 }
