@@ -5,11 +5,8 @@ var displayfps={
     value:0
 }
 var now=Date.now();
-canvas.addEventListener("contextmenu",()=>{
-    event.preventDefault();
-});
 window.addEventListener("keydown",e=>{
-    if(e.code!="RightArrow" && e.code!="DownArrow" && e.code!="UpArrow" && e.code!="LeftArrow"){
+    if(e.code=="ArrowRight" || e.code=="ArrowDown" || e.code=="ArrowUp" || e.code=="ArrowLeft"){
     e.preventDefault();
     }
     key=e.code;
