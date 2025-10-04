@@ -71,10 +71,11 @@ function displayminimap(p){
             ctx.fillText("z-",p[0],p[1]-s*3);
             ctx.fillText("w+",p[0]+s*3.5,p[1]+s/2);
             ctx.fillText("w-",p[0]-s*3.5,p[1]+s/2);
-            if(m.michi){
-            ctx.fillStyle=`hsl(${Math.atan2(d[1]+3.5*d[2],d[0]+3.5*d[3])*180/Math.PI},25%,${30*(2-vec.length(d))+10}%)`;
+            if(!m.michi){
+            //ctx.fillStyle=`hsl(${Math.atan2(d[1]+3.5*d[2],d[0]+3.5*d[3])*180/Math.PI},25%,${30*(2-vec.length(d))+10}%)`;
+                ctx.fillStyle="#00000077";
             }else{
-            ctx.fillStyle="#000000";
+            ctx.fillStyle="#ffffff77";
             }
             ctx.fillRect(p[0]+s*(d[0]+3.5*d[3]),p[1]+s*(d[1]+3.5*d[2]),s,s);
             if(marks.findIndex(e=>m.ijkh.join()==e.join())!=-1){

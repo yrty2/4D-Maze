@@ -9,7 +9,7 @@ canvas.addEventListener("contextmenu",()=>{
     event.preventDefault();
 });
 window.addEventListener("keydown",e=>{
-    //e.preventDefault();
+    e.preventDefault();
     key=e.code;
     keycontrol();
     if(key=="KeyZ"){
@@ -33,7 +33,7 @@ function start(){
     const config=document.querySelector(".config");
     config.innerHTML="";
     canvas.width=screen.width;
-    canvas.height=screen.height;
+    canvas.height=screen.height+1;
     overcanva.width=screen.width;
     overcanva.height=screen.height;
     generateMaze(scale);
@@ -107,17 +107,18 @@ function tesseract(C,color,S,info,joint,z){
     }
     const s=vec.prod(S,size/2);
     const c={x:C[0],y:C[1],z:C[2],w:C[3]};
-    createCube(c.x-s[0],c.y,c.z,c.w,[0,S[1],S[2],S[3]],color,[-1,0,0,0],info,joint,z);
-    createCube(c.x+s[0],c.y,c.z,c.w,[0,S[1],S[2],S[3]],color,[1,0,0,0],info,joint,z);
+    const b=0.01;
+    createCube(c.x-s[0]-b/100,c.y,c.z,c.w,[0,S[1]-b,S[2]-b,S[3]-b],color,[-1,0,0,0],info,joint,z);
+    createCube(c.x+s[0]+b/100,c.y,c.z,c.w,[0,S[1]-b,S[2]-b,S[3]-b],color,[1,0,0,0],info,joint,z);
 
-    createCube(c.x,c.y-s[1],c.z,c.w,[S[0],0,S[2],S[3]],color,[0,-1,0,0],info,joint,z);
-    createCube(c.x,c.y+s[1],c.z,c.w,[S[0],0,S[2],S[3]],color,[0,1,0,0],info,joint,z);
+    createCube(c.x,c.y-s[1]-b/100,c.z,c.w,[S[0]-b,0,S[2]-b,S[3]-b],color,[0,-1,0,0],info,joint,z);
+    createCube(c.x,c.y+s[1]+b/100,c.z,c.w,[S[0]-b,0,S[2]-b,S[3]-b],color,[0,1,0,0],info,joint,z);
 
-    createCube(c.x,c.y,c.z-s[2],c.w,[S[0],S[1],0,S[3]],color,[0,0,-1,0],info,joint,z);
-    createCube(c.x,c.y,c.z+s[2],c.w,[S[0],S[1],0,S[3]],color,[0,0,1,0],info,joint,z);
+    createCube(c.x,c.y,c.z-s[2]-b/100,c.w,[S[0]-b,S[1]-b,0,S[3]-b],color,[0,0,-1,0],info,joint,z);
+    createCube(c.x,c.y,c.z+s[2]+b/100,c.w,[S[0]-b,S[1]-b,0,S[3]-b],color,[0,0,1,0],info,joint,z);
 
-    createCube(c.x,c.y,c.z,c.w-s[3],[S[0],S[1],S[2],0],color,[0,0,0,-1],info,joint,z);
-    createCube(c.x,c.y,c.z,c.w+s[3],[S[0],S[1],S[2],0],color,[0,0,0,1],info,joint,z);
+    createCube(c.x,c.y,c.z,c.w-s[3]-b/100,[S[0]-b,S[1]-b,S[2]-b,0],color,[0,0,0,-1],info,joint,z);
+    createCube(c.x,c.y,c.z,c.w+s[3]+b/100,[S[0]-b,S[1]-b,S[2]-b,0],color,[0,0,0,1],info,joint,z);
 }
 var mon=0;
 function tenkai(C,color,S){
@@ -469,40 +470,6 @@ function cube3D(p,s,color,info,joint){
     }
     tesseract(vec.sum(vec.prod(p,0.5),vec.prod(s,size/2)),color,s,info,joint);
 }
-function coloredhypercube(p,s,info,joint,z){
-    if(!s.length){
-        s=[s,s,s,s];
-    }
-    coloredtesseract(vec.sum(vec.prod(p,0.5),vec.prod(s,size/2)),s,info,joint,z);
-}
-function coloredtesseract(C,S,info,joint,z){
-    if(Number.isFinite(S)){
-        S=[S,S,S,S];
-    }
-    if(joint=="self" || !joint){
-    joint=vec.prod(C,2);
-    }else{
-    joint=vec.prod(joint,2);
-    }
-    const s=vec.prod(S,size/2);
-    const c={x:C[0],y:C[1],z:C[2],w:C[3]};
-    const f=0.5;
-    const xc=[1,f,f,1];
-    const yc=[f,f,1,1];
-    const zc=[f,1,f,1];
-    const wc=[1,1,f,1];
-    createCube(c.x-s[0],c.y,c.z,c.w,[0,S[1],S[2],S[3]],xc,[-1,0,0,0],info,joint,z);
-    createCube(c.x+s[0],c.y,c.z,c.w,[0,S[1],S[2],S[3]],xc,[1,0,0,0],info,joint,z);
-
-    createCube(c.x,c.y-s[1],c.z,c.w,[S[0],0,S[2],S[3]],yc,[0,-1,0,0],info,joint,z);
-    createCube(c.x,c.y+s[1],c.z,c.w,[S[0],0,S[2],S[3]],yc,[0,1,0,0],info,joint,z);
-
-    createCube(c.x,c.y,c.z-s[2],c.w,[S[0],S[1],0,S[3]],zc,[0,0,-1,0],info,joint,z);
-    createCube(c.x,c.y,c.z+s[2],c.w,[S[0],S[1],0,S[3]],zc,[0,0,1,0],info,joint,z);
-
-    createCube(c.x,c.y,c.z,c.w-s[3],[S[0],S[1],S[2],0],wc,[0,0,0,-1],info,joint,z);
-    createCube(c.x,c.y,c.z,c.w+s[3],[S[0],S[1],S[2],0],wc,[0,0,0,1],info,joint,z);
-}
 function hypercube(p,s,color,info,joint,z){
     if(!s.length){
         s=[s,s,s,s];
@@ -592,4 +559,38 @@ function animation(){
     }
     generateInstance();
 }
-generateInstance();
+function coloredhypercube(p,s,info,joint,z){
+    if(!s.length){
+        s=[s,s,s,s];
+    }
+    coloredtesseract(vec.sum(vec.prod(p,0.5),vec.prod(s,size/2)),s,info,joint,z);
+}
+function coloredtesseract(C,S,info,joint,z){
+    if(Number.isFinite(S)){
+        S=[S,S,S,S];
+    }
+    if(joint=="self" || !joint){
+    joint=vec.prod(C,2);
+    }else{
+    joint=vec.prod(joint,2);
+    }
+    const s=vec.prod(S,size/2);
+    const c={x:C[0],y:C[1],z:C[2],w:C[3]};
+    const f=0.5;
+    const xc=[1,f,f,1];
+    const yc=[f,f,1,1];
+    const zc=[f,1,f,1];
+    const wc=[1,1,f,1];
+    const b=0.1;
+    createCube(c.x-s[0]-b/100,c.y,c.z,c.w,[0,S[1]-b,S[2]-b,S[3]-b],xc,[-1,0,0,0],info,joint,z);
+    createCube(c.x+s[0]+b/100,c.y,c.z,c.w,[0,S[1]-b,S[2]-b,S[3]-b],xc,[1,0,0,0],info,joint,z);
+
+    createCube(c.x,c.y-s[1]-b/100,c.z,c.w,[S[0]-b,0,S[2]-b,S[3]-b],yc,[0,-1,0,0],info,joint,z);
+    createCube(c.x,c.y+s[1]+b/100,c.z,c.w,[S[0]-b,0,S[2]-b,S[3]-b],yc,[0,1,0,0],info,joint,z);
+
+    createCube(c.x,c.y,c.z-s[2]-b/100,c.w,[S[0]-b,S[1]-b,0,S[3]-b],zc,[0,0,-1,0],info,joint,z);
+    createCube(c.x,c.y,c.z+s[2]+b/100,c.w,[S[0]-b,S[1]-b,0,S[3]-b],zc,[0,0,1,0],info,joint,z);
+
+    createCube(c.x,c.y,c.z,c.w-s[3]-b/100,[S[0]-b,S[1]-b,S[2]-b,0],wc,[0,0,0,-1],info,joint,z);
+    createCube(c.x,c.y,c.z,c.w+s[3]+b/100,[S[0]-b,S[1]-b,S[2]-b,0],wc,[0,0,0,1],info,joint,z);
+}

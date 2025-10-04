@@ -32,7 +32,7 @@ function frame(){
             }
             const d=vec.dec(m.position,vec.dec(player.position,vec.prod(f,boxsize/2)));
             if(vec.length(d)<0.5){
-                player.position=vec.sum(m.position,vec.prod(f,boxsize/2)).slice();
+                player.position=roundPosition(vec.sum(m.position,vec.prod(f,boxsize/2))).slice();
                 player.ijkh=m.ijkh;
                 moveSeed=-1;
                 if(kagi.list.findIndex(e=>e.join()==m.ijkh.join())!=-1){
@@ -44,21 +44,24 @@ function frame(){
                         youwingoal();
                     }
                 }
-            }
+            }else{
             player.position=vec.sum(player.position,vec.prod(d,14/(2*fps)));
+            }
         }
     }
     if(!win && rotor.length>0){
         const r=rotor[0];
         if(r.mode==3 || r.mode==4){
-            view4D=3.5;
+            view4D=3.6;
         }
-        if(vec.length(vec.dec(r.res,z))>0.1){
+        if(vec.length(vec.dec(r.res,z))>6/fps){
             z=clifford.product4D(z,clifford.rot(4,r.mode,60*r.value*Math.PI/(2*rotortime*fps)));
         }else{
-            z=r.res.slice();
+            z=(r.res).slice();
             rotor=deleteIndex(rotor,0).slice();
-            view4D=2.5;
+            //view4D=2.4501;
+            //view4D=(2.4501+2.549999)/2;
+            view4D=baseview4d;
         }
         r.timer++;
     }
@@ -69,7 +72,7 @@ function keycontrol(){
         if(win){
             z=clifford.product4D(z,clifford.rot(4,1,Math.PI/40));
         }else{
-            toz=clifford.product4D(toz,clifford.rot(4,1,Math.PI/2));
+            toz=roundCliff(clifford.product4D(toz,clifford.rot(4,1,Math.PI/2)));
         rotor.push({
             res:toz,
             seed:Math.random(),
@@ -260,4 +263,30 @@ function mezirushi(){
     }
     generateInstance();
         }
+}
+function roundCliff(z){
+    const a=[];
+    for(let k=0; k<16; ++k){
+        if(Math.abs(z[k])<0.00001){
+        a.push(Math.round(z[k]));
+        }else if(z[k]<1.00001 && z[k]>0.999999){
+            a.push(1);
+        }else if(z[k]>-1.00001 && z[k]<-0.999999){
+            a.push(-1);
+        }else if(z[k]<0.50001 && z[k]>0.499999){
+            a.push(0.5);
+        }else if(z[k]>-0.50001 && z[k]<-0.499999){
+            a.push(-0.5);
+        }else{
+            a.push(z[k]);
+        }
+    }
+    return a;
+}
+function roundPosition(v){
+    const a=[];
+    for(let k=0; k<4; ++k){
+        a.push(Math.round(v[k]));
+    }
+    return a;
 }

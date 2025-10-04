@@ -1,7 +1,9 @@
 let arot=[false,[0,0,0,0,0]];
-const size=0.5;//5のとき1,10のとき0.5
-var view4D=2.5;
-var light=[0,0,100,0];
+const size=0.5;
+var baseview4d=2.4995;
+var view4D=baseview4d;
+var light=[0,0,-20,0];
+var specular=true;
 var z=[1,0,0,0,
       0,0,0,0,
       0,0,0,0,
@@ -182,7 +184,6 @@ return array<f32,16>((r*R)+(x*X)+(y*Y)+(z*Z)+(w*W)-(xy*XY)-(yz*YZ)-(xz*XZ)-(xw*X
 @vertex
 fn main(@location(0) position: vec4<f32>,@location(1) color: vec4<f32>,@location(2) pos: vec4<f32>,@location(3) scale: vec4<f32>,@location(4) ray: vec4<f32>,@location(5) joint: vec4<f32>,@location(6) z: vec4<f32>,@location(7) zw: vec4<f32>) -> VertexOutput {
   var output : VertexOutput;
-  var p=position;
   let c=array<f32,16>(
   uniforms.rot[0][0],uniforms.rot[0][1],uniforms.rot[0][2],uniforms.rot[0][3],
   uniforms.rot[1][0],uniforms.rot[1][1],uniforms.rot[1][2],uniforms.rot[1][3],
@@ -196,32 +197,27 @@ fn main(@location(0) position: vec4<f32>,@location(1) color: vec4<f32>,@location
   0,0,0,zw.x
   );
   let ci=inverse(c);
-  p=p*scale;
-  p+=pos;
   let iz=inverse(Z);
-  p=p+uniforms.camera;
-  p=cliff2vec(geoprod(geoprod(ci,vec2cliff(cliff2vec(geoprod(geoprod(iz,vec2cliff(p-joint/2)),Z))+joint/2)),c));
+  var p=cliff2vec(geoprod(geoprod(ci,vec2cliff(cliff2vec(geoprod(geoprod(iz,vec2cliff(position*scale+uniforms.camera+pos-joint/2)),Z))+joint/2)),c));
+  if(abs(p.w)>=uniforms.view4D){
+  p=vec4f(0,0,-1,0);
+  }else{
   var normal=normalize(cliff2vec(geoprod(geoprod(ci,vec2cliff(cliff2vec(geoprod(geoprod(iz,vec2cliff(ray-joint/2)),Z))+joint/2)),c)));
   var lights:f32=(dot(normal,normalize(uniforms.light-p))+1)/2;
-  if(lights<0.3){
-  lights=0.3;
-  }
-  output.zdepth=abs(p.w);
-  if(abs(p.w)>=uniforms.view4D){
-  p.z=-1;
+  if(lights<0){
+  lights=0;
   }
   output.light=lights;
-  let dst:f32=1;
+  output.zdepth=abs(p.w);
+  let dst:f32=1.15;
   let zst:f32=abs(p.z+dst);
   output.Position=vec4<f32>(p.x*dst/(zst),p.y*dst/(zst)*uniforms.aspect,(p.z+dst)*0.0001,1);
   output.fragColor=color;
+  }
   return output;
 }
 @fragment
 fn fragmain(@location(0) fragColor: vec4<f32>,@location(1) light: f32,@location(2) zdepth:f32) -> @location(0) vec4<f32> {
-if(zdepth>=uniforms.view4D){
-discard;
-}
   return vec4<f32>(fragColor.xyz*light,fragColor.w);
 }
 `;

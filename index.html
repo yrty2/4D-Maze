@@ -9,19 +9,38 @@
             position:absolute;
             left:0px;
             top:0px;
+            padding: 0;
+            margin: 0;
+            overflow: unset;
+            border: none;
+            outline: none;
+            display: block;
             z-index:-10;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
         .overcanvas{
             position:absolute;
             top:0px;
             left:0px;
+            padding: 0;
+            margin: 0;
+            overflow: unset;
+            border: none;
+            outline: none;
+            display: block;
             z-index:10;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body::-webkit-scrollbar{
+            display: none;
         }
     </style>
     <body>
         <canvas class="canvas" width="0" height="0"></canvas>
         <canvas class="overcanva" width="0" height="0"></canvas>
-        <div class="config">
+        <t class="config">
         <h1>4D Maze</h1>
             これからあなたは4次元ユークリッド空間に閉じ込められます...<br>
         <input type="button" value="脱出する" onclick="start()" /><br>
@@ -51,8 +70,8 @@
             <hr>
             ＊スクリーンショット<br>
             <img src="description.jpeg" />
-        </div>
-        <script type="text/javascript" src="mathematics.lib.js"></script>
+        </t>
+        <script type="text/javascript" src="../../mathematics.lib.js"></script>
         <script type="text/javascript" src="gpu.js"></script>
         <script type="text/javascript" src="main.js"></script>
         <script type="text/javascript" src="maze.js"></script>

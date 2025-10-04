@@ -1,3 +1,4 @@
+var seed=Math.random();
 var air=[];
 var worktime=0;
 var gamemode="4D";
@@ -214,14 +215,22 @@ function anahori(amount){
 function createKabe(){
     for(const m of map){
         if(!m.michi){
-            const C=math.hsl2rgb(math.rand(0,360),0.5,0.55);
-            const s=0.1;
+            const f=Math.floor(vec.length(m.ijkh)/2);
+            var a=0.5;
+            var light=math.rand(0.4,0.5);
+            if(math.mod(m.ijkh[0]+m.ijkh[1]+m.ijkh[2]+m.ijkh[3],5)==0){
+                a=0.65;
+                light=0.65;
+            }
+            const C=math.hsl2rgb(math.rand(f*120,(f+1)*120)+360*seed,a,light);
+            const s=0;
             hypercube(vec.sum(m.position,[s,s,s,s]),vec.dec([boxsize,boxsize,boxsize,boxsize*(gamemode=="4D")],[2*s,2*s,2*s,2*s]),[C[0],C[1],C[2],1],{seed:m.seed});
         }
     }
     generateInstance();
 }
 function getKey(){
+    fps=60;
     const lid=kagi.list.findIndex(e=>e.join()==player.ijkh.join());
     for(const o of obj){
         if(o.info.name=="kagi" && o.info.ijkh.join()==player.ijkh.join()){
