@@ -166,7 +166,8 @@ struct VertexOutput {
   @builtin(position) Position : vec4<f32>,
   @location(0) fragColor : vec4<f32>,
   @location(1) light : f32,
-  @location(2) specular:f32
+  @location(2) specular:f32,
+  @location(3) wdepth:f32
 }
 fn vec2cliff(u:vec4<f32>)->array<f32,16>{
     return array<f32,16>(0,u.x,u.y,u.z,u.w,0,0,0,0,0,0,0,0,0,0,0);
@@ -199,6 +200,7 @@ fn main(@location(0) position: vec4<f32>,@location(1) color: vec4<f32>,@location
   let ci=inverse(c);
   let iz=inverse(Z);
   var p=cliff2vec(geoprod(geoprod(ci,vec2cliff(cliff2vec(geoprod(geoprod(iz,vec2cliff(position*scale+uniforms.camera+pos-joint/2)),Z))+joint/2)),c));
+  output.wdepth=abs(p.w);
   if(abs(p.w)>=uniforms.view4D){
   p.z=-1;
   }else{
@@ -206,7 +208,6 @@ fn main(@location(0) position: vec4<f32>,@location(1) color: vec4<f32>,@location
   var lights:f32=(dot(normal,normalize(uniforms.light-p))+1)/2;
   output.light=lights;
   output.specular=pow(dot(normal,normalize(normalize(uniforms.light-p)+normalize(-p))),31);
-  
   let dst:f32=1.15;
   let zst:f32=abs(p.z+dst);
   output.Position=vec4<f32>(p.x*dst/(zst),p.y*dst/(zst)*uniforms.aspect,(p.z+dst)*0.0001,1);
@@ -215,7 +216,10 @@ fn main(@location(0) position: vec4<f32>,@location(1) color: vec4<f32>,@location
   return output;
 }
 @fragment
-fn fragmain(@location(0) fragColor: vec4<f32>,@location(1) light: f32,@location(2) specular:f32) -> @location(0) vec4<f32> {
+fn fragmain(@location(0) fragColor: vec4<f32>,@location(1) light: f32,@location(2) specular:f32,@location(3) wdepth:f32) -> @location(0) vec4<f32> {
+if(wdepth>=uniforms.view4D){
+discard;
+}
   return vec4<f32>(fragColor.xyz*light+specular,fragColor.w);
 }
 `;
