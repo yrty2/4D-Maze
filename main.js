@@ -9,7 +9,9 @@ canvas.addEventListener("contextmenu",()=>{
     event.preventDefault();
 });
 window.addEventListener("keydown",e=>{
+    if(e.code!="RightArrow" && e.code!="DownArrow" && e.code!="UpArrow" && e.code!="LeftArrow"){
     e.preventDefault();
+    }
     key=e.code;
     keycontrol();
     if(key=="KeyZ"){
