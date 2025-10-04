@@ -257,7 +257,7 @@ function putItems(){
         }
     goalPosition=map[mid].position;
     goalijkh=map[mid].ijkh;
-    coloredWireframe(vec.sum(goalPosition,vec.prod([1,1,1,1],boxsize/2)),boxsize,1,{name:"goal"});
+    coloredWireframe(vec.sum(goalPosition,vec.prod([1,1,1,1],boxsize/2)),boxsize,0.8,{name:"goal"});
     mid=-1;
     for(let k=0; k<kagi.amount; ++k){
         while(mid==-1 || !map[mid].michi || goalijkh.join()==map[mid].ijkh.join() || kagi.list.findIndex(e=>e.join()==map[mid].ijkh.join())!=-1){
