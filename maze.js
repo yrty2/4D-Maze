@@ -6,7 +6,7 @@ const map=[];
 var scale=8;
 var glass={
     value:0,
-    max:3
+    max:16
 }
 var zetsubou=false;
 var mezirusitime=0;
