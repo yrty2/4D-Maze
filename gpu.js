@@ -207,7 +207,7 @@ fn main(@location(0) position: vec4<f32>,@location(1) color: vec4<f32>,@location
   var normal=normalize(cliff2vec(geoprod(geoprod(ci,vec2cliff(cliff2vec(geoprod(geoprod(iz,vec2cliff(ray-joint/2)),Z))+joint/2)),c)));
   var lights:f32=(dot(normal,normalize(uniforms.light-p))+1)/2;
   output.light=lights;
-  output.specular=pow(dot(normal,normalize(normalize(uniforms.light-p)+normalize(-p))),31);
+  output.specular=pow(dot(normal,normalize(normalize(uniforms.light-p)+normalize(-p))),60);
   let dst:f32=1.15;
   let zst:f32=abs(p.z+dst);
   output.Position=vec4<f32>(p.x*dst/(zst),p.y*dst/(zst)*uniforms.aspect,(p.z+dst)*0.0001,1);
