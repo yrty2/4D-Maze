@@ -4,6 +4,7 @@ var worktime=0;
 var gamemode="4D";
 const map=[];
 var scale=8;
+var zetsubou=false;
 var mezirusitime=0;
 var hojoavailable=true;
 var mazirushiavailable=true;
@@ -222,7 +223,10 @@ function createKabe(){
                 a=0.65;
                 light=0.65;
             }
-            const C=math.hsl2rgb(math.rand(f*120,(f+1)*120)+360*seed,a,light);
+            var C=math.hsl2rgb(math.rand(f*120,(f+1)*120)+360*seed,a,light);
+            if(zetsubou){
+                C=[0.4,0.4,0.4,0.4];
+            }
             const s=0;
             hypercube(vec.sum(m.position,[s,s,s,s]),vec.dec([boxsize,boxsize,boxsize,boxsize*(gamemode=="4D")],[2*s,2*s,2*s,2*s]),[C[0],C[1],C[2],1],{seed:m.seed});
         }

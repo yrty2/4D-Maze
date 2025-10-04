@@ -50,6 +50,7 @@
             鍵の数:<t id="kagidisplay">5</t><input type="range" value="5" min="0" max="8" onchange="kagi.amount=this.value; document.getElementById('kagidisplay').innerHTML=this.value" /><br>
             補助の使用<input type="checkbox" onchange="hojoavailable=!hojoavailable" checked /><br>
             目印の使用<input type="checkbox" onchange="hojoavailable=!hojoavailable" checked /><br>
+            絶望モード<input type="checkbox" onchange="zetsubou=!zetsubou" /><br>
             目印は5秒に1回設置できます<br>
             <br>
             目安として、8の4乗で鍵5は10分程度、9の4乗で鍵8ではクリアするのに数時間かかります。
@@ -71,7 +72,7 @@
             ＊スクリーンショット<br>
             <img src="description.jpeg" />
         </t>
-        <script type="text/javascript" src="mathematics.lib.js"></script>
+        <script type="text/javascript" src="../../mathematics.lib.js"></script>
         <script type="text/javascript" src="gpu.js"></script>
         <script type="text/javascript" src="main.js"></script>
         <script type="text/javascript" src="maze.js"></script>

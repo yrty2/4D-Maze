@@ -166,7 +166,7 @@ struct VertexOutput {
   @builtin(position) Position : vec4<f32>,
   @location(0) fragColor : vec4<f32>,
   @location(1) light : f32,
-  @location(2) zdepth:f32
+  @location(2) specular:f32
 }
 fn vec2cliff(u:vec4<f32>)->array<f32,16>{
     return array<f32,16>(0,u.x,u.y,u.z,u.w,0,0,0,0,0,0,0,0,0,0,0);
@@ -204,11 +204,9 @@ fn main(@location(0) position: vec4<f32>,@location(1) color: vec4<f32>,@location
   }else{
   var normal=normalize(cliff2vec(geoprod(geoprod(ci,vec2cliff(cliff2vec(geoprod(geoprod(iz,vec2cliff(ray-joint/2)),Z))+joint/2)),c)));
   var lights:f32=(dot(normal,normalize(uniforms.light-p))+1)/2;
-  if(lights<0){
-  lights=0;
-  }
   output.light=lights;
-  output.zdepth=abs(p.w);
+  output.specular=pow(dot(normal,normalize(normalize(uniforms.light-p)+normalize(-p))),31);
+  
   let dst:f32=1.15;
   let zst:f32=abs(p.z+dst);
   output.Position=vec4<f32>(p.x*dst/(zst),p.y*dst/(zst)*uniforms.aspect,(p.z+dst)*0.0001,1);
@@ -217,8 +215,8 @@ fn main(@location(0) position: vec4<f32>,@location(1) color: vec4<f32>,@location
   return output;
 }
 @fragment
-fn fragmain(@location(0) fragColor: vec4<f32>,@location(1) light: f32,@location(2) zdepth:f32) -> @location(0) vec4<f32> {
-  return vec4<f32>(fragColor.xyz*light,fragColor.w);
+fn fragmain(@location(0) fragColor: vec4<f32>,@location(1) light: f32,@location(2) specular:f32) -> @location(0) vec4<f32> {
+  return vec4<f32>(fragColor.xyz*light+specular,fragColor.w);
 }
 `;
 
