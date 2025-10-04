@@ -1,9 +1,15 @@
 var key="";
+var fps=0;
+var displayfps={
+    update:0,
+    value:0
+}
+var now=Date.now();
 canvas.addEventListener("contextmenu",()=>{
     event.preventDefault();
 });
 window.addEventListener("keydown",e=>{
-    e.preventDefault();
+    //e.preventDefault();
     key=e.code;
     keycontrol();
     if(key=="KeyZ"){
@@ -36,6 +42,14 @@ function start(){
 }
 //描画毎に行う処理
 function translate(){
+    fps=1000/(Date.now()-now);
+    displayfps.update++;
+    if(displayfps.update>60){
+        displayfps.value=fps;
+        displayfps.update=0;
+    }
+    now=Date.now();
+    var delta=0;
     frame();
     const cv=camera.velocity/60;
     //animation();

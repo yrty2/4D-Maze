@@ -3,6 +3,7 @@ var worktime=0;
 var gamemode="4D";
 const map=[];
 var scale=8;
+var mezirusitime=0;
 var hojoavailable=true;
 var mazirushiavailable=true;
 var win=false;
@@ -17,7 +18,8 @@ const kagi={
 
 const player={
     position:[0,0,0,0],
-    ijkh:[0,0,0,0]
+    ijkh:[0,0,0,0],
+    toijkh:[0,0,0,0]
 }
 var mazeCreated=false;
 var boxsize=10;
@@ -76,6 +78,7 @@ function generateMaze(size){
     player.position[3]=0;
     }
     player.ijkh=f;
+    player.toijkh=f;
     const mid=map.findIndex(e=>e.ijkh.join()==player.ijkh.join());
     if(mid!=-1){
         map[mid].michi=true;

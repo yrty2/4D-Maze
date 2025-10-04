@@ -23,14 +23,18 @@
         <canvas class="overcanva" width="0" height="0"></canvas>
         <div class="config">
         <h1>4D Maze</h1>
-        <input type="button" value="スタート!" onclick="start()" /><br>
+            これからあなたは4次元ユークリッド空間に閉じ込められます...<br>
+        <input type="button" value="脱出する" onclick="start()" /><br>
             設定<br>
         スケール:<t id="sizedisplay"><math><msup><mi>8</mi><mn>4</mn></msup></math>
 </t><input type="range" value="8" min="4" max="10" onchange="scale=this.value; document.getElementById('sizedisplay').innerHTML='<math><msup><mi>'+this.value+'</mi><mn>4</mn></msup></math>'" /><br>
             鍵の数:<t id="kagidisplay">5</t><input type="range" value="5" min="0" max="8" onchange="kagi.amount=this.value; document.getElementById('kagidisplay').innerHTML=this.value" /><br>
             補助の使用<input type="checkbox" onchange="hojoavailable=!hojoavailable" checked /><br>
             目印の使用<input type="checkbox" onchange="hojoavailable=!hojoavailable" checked /><br>
-            目印は8個まで設置可能です。<hr>
+            目印は5秒に1回設置できます<br>
+            <br>
+            目安として、8の4乗で鍵5は10分程度、9の4乗で鍵8ではクリアするのに数時間かかります。
+            <hr>
             ＊操作方法<br><br>
             [Enter]:前へ進む<br>
             [W,Sキー]:上下を向く<br>
@@ -39,9 +43,16 @@
             [上下矢印キー]:ハイパー上下を向く<br>
             [左右矢印キー]:ハイパー左右を向く<br>
             [Tキー]:目印の設置<br>
-            [Iキー]:補助の切り替え
+            [Iキー]:補助の切り替え<br>
+            <hr>
+            ＊注意事項<br>
+            このゲームは無音です。音楽を聞きながらプレイすることを強くおすすめします。気が狂うかもしれません。<br>
+            3D・4D酔いしやすい人はやらないでください。
+            <hr>
+            ＊スクリーンショット<br>
+            <img src="description.jpeg" />
         </div>
-        <script type="text/javascript" src="mathematics.lib.js"></script>
+        <script type="text/javascript" src="../../mathematics.lib.js"></script>
         <script type="text/javascript" src="gpu.js"></script>
         <script type="text/javascript" src="main.js"></script>
         <script type="text/javascript" src="maze.js"></script>

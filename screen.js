@@ -11,6 +11,9 @@ function hojoscreen(){
     const f=Math.floor(scale/2);
     ctx.fillText(`x:${player.ijkh[0]-f},y:${player.ijkh[1]-f},z:${player.ijkh[2]-f},w:${player.ijkh[3]-f}`,20,60);
     ctx.fillText(`Keys:${kagi.amount-kagi.value}(${kagi.value} left)`,20,120);
+        ctx.font = "25px serif";
+    ctx.fillText(`fps:${Math.round(displayfps.value*10)/10}`,2*w-300,2*h-60);
+        ctx.font = "50px serif";
     monovector([100,0,0,0],[220,600]);
     monovector([0,100,0,0],[220,600]);
     monovector([0,0,100,0],[220,600]);

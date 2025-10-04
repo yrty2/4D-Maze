@@ -1,15 +1,19 @@
 const marks=[];
 var moveSeed=-1;
 var hojo=false;
-var rotortime=10;
+var rotortime=17;
 var rotor=[];
 function frame(){
+    if(mezirusitime>0){
+        mezirusitime--;
+    }
     if(key=="Enter"){
         if(moveSeed==-1){
             const v=clifford.rotate4D([0,0,1,0],clifford.inverse(z));
             const mid=map.findIndex(e=>e.michi && vec.length(vec.dec(vec.dec(e.ijkh,player.ijkh),v))<0.1);
             if(mid!=-1){
             moveSeed=map[mid].seed;
+            player.toijkh=map[mid].ijkh;
             }
         }
     }
@@ -41,7 +45,7 @@ function frame(){
                     }
                 }
             }
-            player.position=vec.sum(player.position,vec.prod(d,1/8));
+            player.position=vec.sum(player.position,vec.prod(d,14/(2*fps)));
         }
     }
     if(!win && rotor.length>0){
@@ -49,9 +53,10 @@ function frame(){
         if(r.mode==3 || r.mode==4){
             view4D=3.5;
         }
-        if(r.timer<rotortime){
-            z=clifford.product4D(z,clifford.rot(4,r.mode,r.value*Math.PI/(2*rotortime)));
+        if(vec.length(vec.dec(r.res,z))>0.1){
+            z=clifford.product4D(z,clifford.rot(4,r.mode,60*r.value*Math.PI/(2*rotortime*fps)));
         }else{
+            z=r.res.slice();
             rotor=deleteIndex(rotor,0).slice();
             view4D=2.5;
         }
@@ -64,7 +69,9 @@ function keycontrol(){
         if(win){
             z=clifford.product4D(z,clifford.rot(4,1,Math.PI/40));
         }else{
+            toz=clifford.product4D(toz,clifford.rot(4,1,Math.PI/2));
         rotor.push({
+            res:toz,
             seed:Math.random(),
             mode:1,
             value:1,
@@ -76,7 +83,9 @@ function keycontrol(){
         if(win){
             z=clifford.product4D(z,clifford.rot(4,2,-Math.PI/40));
         }else{
+            toz=clifford.product4D(toz,clifford.rot(4,2,-Math.PI/2));
         rotor.push({
+            res:toz,
             seed:Math.random(),
             mode:2,
             value:-1,
@@ -88,7 +97,9 @@ function keycontrol(){
         if(win){
             z=clifford.product4D(z,clifford.rot(4,1,-Math.PI/40));
         }else{
+            toz=clifford.product4D(toz,clifford.rot(4,1,-Math.PI/2));
         rotor.push({
+            res:toz,
             seed:Math.random(),
             mode:1,
             value:-1,
@@ -100,7 +111,9 @@ function keycontrol(){
         if(win){
             z=clifford.product4D(z,clifford.rot(4,2,Math.PI/40));
         }else{
+            toz=clifford.product4D(toz,clifford.rot(4,2,Math.PI/2));
         rotor.push({
+            res:toz,
             seed:Math.random(),
             mode:2,
             value:1,
@@ -112,7 +125,9 @@ function keycontrol(){
         if(win){
             z=clifford.product4D(z,clifford.rot(4,5,Math.PI/40));
         }else{
+            toz=clifford.product4D(toz,clifford.rot(4,5,Math.PI/2));
         rotor.push({
+            res:toz,
             seed:Math.random(),
             mode:5,
             value:1,
@@ -124,7 +139,9 @@ function keycontrol(){
         if(win){
             z=clifford.product4D(z,clifford.rot(4,5,-Math.PI/40));
         }else{
+            toz=clifford.product4D(toz,clifford.rot(4,5,-Math.PI/2));
         rotor.push({
+            res:toz,
             seed:Math.random(),
             mode:5,
             value:-1,
@@ -136,7 +153,9 @@ function keycontrol(){
         if(win){
             z=clifford.product4D(z,clifford.rot(4,3,Math.PI/40));
         }else{
+            toz=clifford.product4D(toz,clifford.rot(4,3,Math.PI/2));
         rotor.push({
+            res:toz,
             seed:Math.random(),
             mode:3,
             value:1,
@@ -148,7 +167,9 @@ function keycontrol(){
         if(win){
             z=clifford.product4D(z,clifford.rot(4,3,-Math.PI/40));
         }else{
+            toz=clifford.product4D(toz,clifford.rot(4,3,-Math.PI/2));
         rotor.push({
+            res:toz,
             seed:Math.random(),
             mode:3,
             value:-1,
@@ -160,7 +181,9 @@ function keycontrol(){
         if(win){
             z=clifford.product4D(z,clifford.rot(4,4,Math.PI/40));
         }else{
+            toz=clifford.product4D(toz,clifford.rot(4,4,Math.PI/2));
         rotor.push({
+            res:toz,
             seed:Math.random(),
             mode:4,
             value:1,
@@ -172,7 +195,9 @@ function keycontrol(){
         if(win){
             z=clifford.product4D(z,clifford.rot(4,4,-Math.PI/40));
         }else{
+            toz=clifford.product4D(toz,clifford.rot(4,4,-Math.PI/2));
         rotor.push({
+            res:toz,
             seed:Math.random(),
             mode:4,
             value:-1,
@@ -184,7 +209,9 @@ function keycontrol(){
         if(win){
             z=clifford.product4D(z,clifford.rot(4,0,Math.PI/40));
         }else{
+            toz=clifford.product4D(toz,clifford.rot(4,0,Math.PI/2));
         rotor.push({
+            res:toz,
             seed:Math.random(),
             mode:0,
             value:1,
@@ -196,7 +223,9 @@ function keycontrol(){
         if(win){
             z=clifford.product4D(z,clifford.rot(4,0,-Math.PI/40));
         }else{
+            toz=clifford.product4D(toz,clifford.rot(4,0,-Math.PI/2));
         rotor.push({
+            res:toz,
             seed:Math.random(),
             mode:0,
             value:-1,
@@ -205,8 +234,9 @@ function keycontrol(){
             }
     }
     if(key=="KeyT"){
-        if(mazirushiavailable){
+        if(mazirushiavailable && mezirusitime==0){
             mezirushi();
+            mezirusitime=300;
         }
     }
     if(key=="KeyI"){
@@ -216,16 +246,18 @@ function keycontrol(){
     }
 }
 function mezirushi(){
-    marks.push(player.ijkh);
+    if(marks.findIndex(e=>e.join()==player.toijkh.join())==-1){
+    marks.push(player.toijkh);
     const s=2;
     for(let i=0; i<=1; ++i){
         for(let j=0; j<=1; ++j){
             for(let k=0; k<=1; ++k){
                 for(let h=0; h<=1; ++h){
-    hypercube(vec.sum(vec.dec(player.position,vec.prod([1,1,1,1],boxsize/2)),[i*(boxsize-s),j*(boxsize-s),k*(boxsize-s),h*(boxsize-s)]),s,[0,1,1,0.5]);
+    hypercube(vec.sum(vec.prod(player.toijkh,boxsize),[i*(boxsize-s),j*(boxsize-s),k*(boxsize-s),h*(boxsize-s)]),s,[0,1,1,0.5]);
                 }
             }
         }
     }
     generateInstance();
+        }
 }
