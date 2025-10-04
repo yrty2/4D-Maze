@@ -220,7 +220,7 @@ fn fragmain(@location(0) fragColor: vec4<f32>,@location(1) light: f32,@location(
 if(wdepth>=uniforms.view4D){
 discard;
 }
-  return vec4<f32>(fragColor.xyz*light+specular,fragColor.w);
+  return vec4<f32>(fragColor.xyz*light+specular/2,fragColor.w);
 }
 `;
 
