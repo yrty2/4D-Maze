@@ -4,6 +4,10 @@ var worktime=0;
 var gamemode="4D";
 const map=[];
 var scale=8;
+var glass={
+    value:0,
+    max:3
+}
 var zetsubou=false;
 var mezirusitime=0;
 var hojoavailable=true;
@@ -228,7 +232,24 @@ function createKabe(){
                 C=[0.4,0.4,0.4,0.4];
             }
             const s=0;
+            if(!zetsubou && Math.random()<0.01 && glass.value<glass.max && m.ijkh[0]!=0 && m.ijkh[1]!=0 && m.ijkh[2]!=0 && m.ijkh[3]!=0 && m.ijkh[0]!=scale-1 && m.ijkh[1]!=scale-1 && m.ijkh[2]!=scale-1 && m.ijkh[3]!=scale-1){
+                gd=math.randInt(1,4);
+                for(let i=-1; i<=1; ++i){
+                    for(let j=-1; j<=1; ++j){
+                        for(let k=-1; k<=1; ++k){
+                            for(let h=-1; h<=1; ++h){
+                                if((i==0 && gd==1) || (j==0 && gd==2) || (k==0 && gd==3) || (h==0 && gd==4)){
+                                C=math.hsl2rgb(math.rand(f*120,(f+1)*120)+360*seed,a,light);
+                tesseract(vec.prod(vec.sum(vec.sum(m.position,vec.prod([1,1,1,1],boxsize/2)),vec.prod([i,j,k,h],boxsize/3)),0.5),[C[0],C[1],C[2],0.5],vec.prod([boxsize,boxsize,boxsize,boxsize],1/3),{seed:m.seed});
+                                glass.value++;
+                                }
+                                }
+                            }
+                        }
+                }
+            }else{
             hypercube(vec.sum(m.position,[s,s,s,s]),vec.dec([boxsize,boxsize,boxsize,boxsize*(gamemode=="4D")],[2*s,2*s,2*s,2*s]),[C[0],C[1],C[2],1],{seed:m.seed});
+            }
         }
     }
     generateInstance();
