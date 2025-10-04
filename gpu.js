@@ -200,7 +200,7 @@ fn main(@location(0) position: vec4<f32>,@location(1) color: vec4<f32>,@location
   let iz=inverse(Z);
   var p=cliff2vec(geoprod(geoprod(ci,vec2cliff(cliff2vec(geoprod(geoprod(iz,vec2cliff(position*scale+uniforms.camera+pos-joint/2)),Z))+joint/2)),c));
   if(abs(p.w)>=uniforms.view4D){
-  p=vec4f(0,0,-1,0);
+  p.z=-1;
   }else{
   var normal=normalize(cliff2vec(geoprod(geoprod(ci,vec2cliff(cliff2vec(geoprod(geoprod(iz,vec2cliff(ray-joint/2)),Z))+joint/2)),c)));
   var lights:f32=(dot(normal,normalize(uniforms.light-p))+1)/2;
