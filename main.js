@@ -119,7 +119,7 @@ function tesseract(C,color,S,info,joint,z){
     createCube(c.x,c.y,c.z,c.w-s[3]-b/100,[S[0]-b,S[1]-b,S[2]-b,0],color,[0,0,0,-1],info,joint,z);
     createCube(c.x,c.y,c.z,c.w+s[3]+b/100,[S[0]-b,S[1]-b,S[2]-b,0],color,[0,0,0,1],info,joint,z);
 
-    createCube(c.x,c.y,c.z,c.w,[S[0]-b,S[1]-b,S[2]-b,S[3]-b],color,[0,0,0,-1],info,joint,z);
+    createCube(c.x,c.y,c.z,c.w,[S[0]-b,S[1]-b,S[2]-b,S[3]-b],color,[0,0,0,0],info,joint,z);
 }
 var mon=0;
 function tenkai(C,color,S){
