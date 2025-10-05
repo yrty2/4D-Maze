@@ -7,7 +7,7 @@ function frame(){
     if(mezirusitime>0){
         mezirusitime--;
     }
-    if(key=="Enter"){
+    if(key=="Enter" || mon==4){
         if(moveSeed==-1){
             const v=clifford.rotate4D([0,0,1,0],clifford.inverse(z));
             const mid=map.findIndex(e=>e.michi && vec.length(vec.dec(vec.dec(e.ijkh,player.ijkh),v))<0.1);
@@ -290,3 +290,146 @@ function roundPosition(v){
     }
     return a;
 }
+var mon=0;
+var rotmon=false;
+window.addEventListener("mousedown",e=>{
+    rotmon=false;
+    if(e.button!=0){
+        if(e.button==2){
+        mon=2;
+        }
+        if(e.button==4){
+        mon=3;
+            if(mazirushiavailable && mezirusitime==0){
+            mezirushi();
+            mezirusitime=300;
+        }
+        }
+    }else{
+    mon=1;
+    }
+});
+window.addEventListener("mouseup",e=>{
+    if(!rotmon){
+            if(mon==1){
+        if(moveSeed==-1){
+            const v=clifford.rotate4D([0,0,1,0],clifford.inverse(z));
+            const mid=map.findIndex(e=>e.michi && vec.length(vec.dec(vec.dec(e.ijkh,player.ijkh),v))<0.1);
+            if(mid!=-1){
+            moveSeed=map[mid].seed;
+            player.toijkh=map[mid].ijkh;
+            }
+        }
+            }
+        if(mon==2){
+            toz=roundCliff(clifford.product4D(toz,clifford.rot(4,5,Math.PI/2)));
+        rotor.push({
+            res:toz,
+            seed:Math.random(),
+            mode:5,
+            value:1,
+            timer:0
+        });
+        }
+    }
+    mon=0;
+});
+window.addEventListener("mousemove",e=>{
+    if(rotor.length==0){
+    const dx=e.movementX;
+    const dy=e.movementY;
+    const g=25;
+        if(mon==1){
+    if(dx>g){
+        rotmon=true;
+    toz=roundCliff(clifford.product4D(toz,clifford.rot(4,2,Math.PI/2)));
+        rotor.push({
+            res:toz,
+            seed:Math.random(),
+            mode:2,
+            value:1,
+            timer:0
+        });
+    }
+    if(dx<-g){
+        rotmon=true;
+    toz=roundCliff(clifford.product4D(toz,clifford.rot(4,2,-Math.PI/2)));
+        rotor.push({
+            res:toz,
+            seed:Math.random(),
+            mode:2,
+            value:-1,
+            timer:0
+        });
+    }
+    if(dy>g){
+    rotmon=true;
+    toz=roundCliff(clifford.product4D(toz,clifford.rot(4,1,-Math.PI/2)));
+        rotor.push({
+            res:toz,
+            seed:Math.random(),
+            mode:1,
+            value:-1,
+            timer:0
+        });
+    }
+        if(dy<-g){
+    rotmon=true;
+    toz=roundCliff(clifford.product4D(toz,clifford.rot(4,1,Math.PI/2)));
+        rotor.push({
+            res:toz,
+            seed:Math.random(),
+            mode:1,
+            value:1,
+            timer:0
+        });
+    }
+            }
+        if(mon==2){
+            if(dx>g){
+        rotmon=true;
+    toz=roundCliff(clifford.product4D(toz,clifford.rot(4,3,Math.PI/2)));
+        rotor.push({
+            res:toz,
+            seed:Math.random(),
+            mode:3,
+            value:1,
+            timer:0
+        });
+    }
+    if(dx<-g){
+        rotmon=true;
+    toz=roundCliff(clifford.product4D(toz,clifford.rot(4,3,-Math.PI/2)));
+        rotor.push({
+            res:toz,
+            seed:Math.random(),
+            mode:3,
+            value:-1,
+            timer:0
+        });
+    }
+    if(dy>g){
+    rotmon=true;
+    toz=roundCliff(clifford.product4D(toz,clifford.rot(4,4,-Math.PI/2)));
+        rotor.push({
+            res:toz,
+            seed:Math.random(),
+            mode:4,
+            value:-1,
+            timer:0
+        });
+    }
+        if(dy<-g){
+    rotmon=true;
+    toz=roundCliff(clifford.product4D(toz,clifford.rot(4,4,Math.PI/2)));
+        rotor.push({
+            res:toz,
+            seed:Math.random(),
+            mode:4,
+            value:1,
+            timer:0
+        });
+    }       
+        }
+    }
+});
