@@ -1,3 +1,4 @@
+
 var key="";
 var fps=0;
 var displayfps={
@@ -5,6 +6,9 @@ var displayfps={
     value:0
 }
 var now=Date.now();
+window.addEventListener("contextmenu",()=>{
+    event.preventDefault();
+});
 window.addEventListener("keydown",e=>{
     if(e.code=="ArrowRight" || e.code=="ArrowDown" || e.code=="ArrowUp" || e.code=="ArrowLeft"){
     e.preventDefault();
@@ -27,6 +31,12 @@ function youwingoal(){
     win=true;
     z=[0.8109593992738169,0,0,0,0,-0.10922259083550508,-0.181393187610908,-0.32541600277884597,0.34008807975560823,0.14886892396068455,-0.23146080086464585,0,0,0,0,0.014840962045703184];
     endTime=Date.now();
+    obj=[];
+    for(const w of walked){
+        hypercube(vec.prod(w,boxsize),[boxsize,boxsize,boxsize,boxsize],[0.6,0.6,0.6,1]);
+    }
+    wireframeSlim(vec.prod([1,1,1,1],boxsize*scale/2),boxsize*scale/2,0.01);
+    generateInstance();
 }
 function start(){
     const config=document.querySelector(".config");
@@ -323,6 +333,50 @@ function wireframe(p,s,color){
     tesseract(vec.sum(p,[-a,a,a,0]),color,[r,r,r,s]);
     tesseract(vec.sum(p,[a,a,a,0]),color,[r,r,r,s]);
 }
+        function wireframeSlim(p,s,k,color){
+    p=vec.prod(p,1/2);
+    if(!color){
+        //color=[Math.random(),Math.random(),Math.random(),0.8];
+        color=[0,0.5,0.5,0.8];
+    }
+    var a=s/4;
+    var r=s*k;
+    tesseract(vec.sum(p,[0,-a,-a,-a]),color,[s,r,r,r]);
+    tesseract(vec.sum(p,[0,a,-a,-a]),color,[s,r,r,r]);
+    tesseract(vec.sum(p,[0,-a,a,-a]),color,[s,r,r,r]);
+    tesseract(vec.sum(p,[0,a,a,-a]),color,[s,r,r,r]);
+    tesseract(vec.sum(p,[0,-a,-a,a]),color,[s,r,r,r]);
+    tesseract(vec.sum(p,[0,a,-a,a]),color,[s,r,r,r]);
+    tesseract(vec.sum(p,[0,-a,a,a]),color,[s,r,r,r]);
+    tesseract(vec.sum(p,[0,a,a,a]),color,[s,r,r,r]);
+    
+    tesseract(vec.sum(p,[-a,0,-a,-a]),color,[r,s,r,r]);
+    tesseract(vec.sum(p,[a,0,-a,-a]),color,[r,s,r,r]);
+    tesseract(vec.sum(p,[-a,0,a,-a]),color,[r,s,r,r]);
+    tesseract(vec.sum(p,[a,0,a,-a]),color,[r,s,r,r]);
+    tesseract(vec.sum(p,[-a,0,-a,a]),color,[r,s,r,r]);
+    tesseract(vec.sum(p,[a,0,-a,a]),color,[r,s,r,r]);
+    tesseract(vec.sum(p,[-a,0,a,a]),color,[r,s,r,r]);
+    tesseract(vec.sum(p,[a,0,a,a]),color,[r,s,r,r]);
+
+    tesseract(vec.sum(p,[-a,-a,0,-a]),color,[r,r,s,r]);
+    tesseract(vec.sum(p,[a,-a,0,-a]),color,[r,r,s,r]);
+    tesseract(vec.sum(p,[-a,a,0,-a]),color,[r,r,s,r]);
+    tesseract(vec.sum(p,[a,a,0,-a]),color,[r,r,s,r]);
+    tesseract(vec.sum(p,[-a,-a,0,a]),color,[r,r,s,r]);
+    tesseract(vec.sum(p,[a,-a,0,a]),color,[r,r,s,r]);
+    tesseract(vec.sum(p,[-a,a,0,a]),color,[r,r,s,r]);
+    tesseract(vec.sum(p,[a,a,0,a]),color,[r,r,s,r]);
+
+    tesseract(vec.sum(p,[-a,-a,-a,0]),color,[r,r,r,s]);
+    tesseract(vec.sum(p,[a,-a,-a,0]),color,[r,r,r,s]);
+    tesseract(vec.sum(p,[-a,a,-a,0]),color,[r,r,r,s]);
+    tesseract(vec.sum(p,[a,a,-a,0]),color,[r,r,r,s]);
+    tesseract(vec.sum(p,[-a,-a,a,0]),color,[r,r,r,s]);
+    tesseract(vec.sum(p,[a,-a,a,0]),color,[r,r,r,s]);
+    tesseract(vec.sum(p,[-a,a,a,0]),color,[r,r,r,s]);
+    tesseract(vec.sum(p,[a,a,a,0]),color,[r,r,r,s]);
+}
 function jointedWireframe(p,s,color){
     p=vec.prod(p,1/2);
     const self=p;
@@ -483,56 +537,6 @@ function hypercube(p,s,color,info,joint,z){
     }
     tesseract(vec.sum(vec.prod(p,0.5),vec.prod(s,size/2)),color,s,info,joint,z);
 }
-var walkt=0;
-function walking(){
-    walkt++;
-    for(const o of obj){
-            if(o.info=="rightLeg"){
-                o.z=clifford.product4D(o.z,clifford.rot(4,1,Math.cos(walkt/10)/20));
-            }
-            if(o.info=="leftLeg"){
-                o.z=clifford.product4D(o.z,clifford.rot(4,1,-Math.cos(walkt/10)/20));
-            }
-            if(o.info=="rightArm"){
-                o.z=clifford.product4D(o.z,clifford.rot(4,1,-Math.cos(walkt/10)/20));
-            }
-            if(o.info=="leftArm"){
-                o.z=clifford.product4D(o.z,clifford.rot(4,1,Math.cos(walkt/10)/20));
-            }
-        }
-    generateInstance();
-}
-var jt=0;
-function jump(){
-    if(jt>=0){
-    for(const o of obj){
-            if(o.info=="rightLeg"){
-                o.z=clifford.product4D(o.z,clifford.rot(4,0,-0));
-            }
-            if(o.info=="leftLeg"){
-                o.z=clifford.product4D(o.z,clifford.rot(4,0,0));
-            }
-            if(o.info=="rightArm"){
-                o.z=clifford.product4D(o.z,clifford.rot(4,0,Math.cos(jt*Math.PI)/10));
-            }
-            if(o.info=="leftArm"){
-                o.z=clifford.product4D(o.z,clifford.rot(4,0,-Math.cos(jt*Math.PI)/10));
-            }
-        }
-        jt-=1/40;
-        if(jt<0){
-            for(const o of obj){
-            if(o.info=="rightArm"){
-                o.z=clifford.unit(4);
-            }
-            if(o.info=="leftArm"){
-                o.z=clifford.unit(4);
-            }
-            }
-        }
-    generateInstance();
-    }
-}
 function togeball(p,color,info){
 tesseract(p,color,[10,10,10,10],info,vec.prod(p,2),clifford.rot(4,1,Math.PI/4));
 tesseract(p,color,[10,10,10,10],info,vec.prod(p,2),clifford.rot(4,2,Math.PI/4));
@@ -540,25 +544,6 @@ tesseract(p,color,[10,10,10,10],info,vec.prod(p,2),clifford.rot(4,0,Math.PI/4));
 tesseract(p,color,[10,10,10,10],info,vec.prod(p,2),clifford.rot(4,3,Math.PI/4));
 tesseract(p,color,[10,10,10,10],info,vec.prod(p,2),clifford.rot(4,4,Math.PI/4));
 tesseract(p,color,[10,10,10,10],info,vec.prod(p,2),clifford.rot(4,5,Math.PI/4));
-}
-function animation(){
-    if(key=="KeyM"){
-        walking();
-    }
-    jump();
-    if(arot[0]){
-    z=clifford.product4D(z,clifford.rot(4,1,arot[1][0]));
-    z=clifford.product4D(z,clifford.rot(4,2,arot[1][1]));
-    z=clifford.product4D(z,clifford.rot(4,3,arot[1][2]));
-    z=clifford.product4D(z,clifford.rot(4,4,arot[1][3]));
-    z=clifford.product4D(z,clifford.rot(4,5,arot[1][4]));
-    }
-    for(const o of obj){
-        if(o.info=="jwf"){
-            //o.z=clifford.product4D(o.z,clifford.rot(4,3,Math.PI/180));
-        }
-    }
-    generateInstance();
 }
 function coloredhypercube(p,s,info,joint,z){
     if(!s.length){

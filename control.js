@@ -35,6 +35,9 @@ function frame(){
                 player.position=roundPosition(vec.sum(m.position,vec.prod(f,boxsize/2))).slice();
                 player.ijkh=m.ijkh;
                 moveSeed=-1;
+                if(walked.findIndex(e=>e.join()==m.ijkh.join())==-1){
+                    walked.push(m.ijkh);
+                }
                 if(kagi.list.findIndex(e=>e.join()==m.ijkh.join())!=-1){
                     getKey();
                 }

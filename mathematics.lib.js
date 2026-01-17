@@ -2292,7 +2292,7 @@ class cliffordMath{
         for(let k=0; k<=n; ++k){
             var val=l+math.nCr(n,k);
             res.push(u.slice(l,val));
-            if(k%4==0 || k%4==1){
+            if(!(k%4==0 || k%4==1)){
                 res[k]=vec.prod(res[k],-1)
             }
             l=val;

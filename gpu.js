@@ -40,14 +40,14 @@ function generateVertex(){
 function generateInstance(){
 inst=[];
     for(const o of obj){
-        inst.push(o.position[0]);
-        inst.push(o.position[1]);
-        inst.push(o.position[2]);
-        inst.push(o.position[3]);
         inst.push(o.color[0]);
         inst.push(o.color[1]);
         inst.push(o.color[2]);
         inst.push(o.color[3]);
+        inst.push(o.position[0]);
+        inst.push(o.position[1]);
+        inst.push(o.position[2]);
+        inst.push(o.position[3]);
         //スケール(胞を描画するため)
         inst.push(o.vol[0]);
         inst.push(o.vol[1]);
@@ -129,36 +129,16 @@ for(let i=0; i<M.length; ++i){
 return new Float32Array(m);
 }
 const canvas=document.querySelector(".canvas");
-async function main(){
-// webgpuコンテキストの取得
-const context = canvas.getContext('webgpu');
-
-// deviceの取得
-const g_adapter = await navigator.gpu.requestAdapter();
-const g_device = await g_adapter.requestDevice();
-
-//デバイスを割り当て
-const presentationFormat = navigator.gpu.getPreferredCanvasFormat();
-context.configure({
-  device: g_device,
-  format: presentationFormat,
-  alphaMode: 'opaque'
-});
-
-//深度テクスチャ
-var depthTexture;
-      depthTexture =g_device.createTexture({
-    size: [canvas.width,canvas.height],
-    format: 'depth24plus',
-    usage: GPUTextureUsage.RENDER_ATTACHMENT,
-});
-const WGSL=`
+const wgpu=new WGPU(new geometry("E4"),28,
+`
 struct Uniforms {
   camera : vec4<f32>,
   light : vec4<f32>,
   rot:mat4x4<f32>,
   view4D: f32,
-  aspect: f32
+  aspect: f32,
+  dammyn:f32,
+  dammyn2:f32
 }
 @binding(0) @group(0) var<uniform> uniforms : Uniforms;
 
@@ -222,212 +202,18 @@ discard;
 }
   return vec4<f32>(fragColor.xyz*light+specular/2,fragColor.w);
 }
-`;
-
+`);
 generateVertex();
-function render(){
-hojoscreen();
-//頂点配列
-const quadVertexArray = new Float32Array(vertex);
-// 頂点データを作成.
-const verticesBuffer = g_device.createBuffer({
-  size: quadVertexArray.byteLength,
-  usage: GPUBufferUsage.VERTEX,
-  mappedAtCreation: true,
-});
-new Float32Array(verticesBuffer.getMappedRange()).set(quadVertexArray);
-verticesBuffer.unmap();
-
-//インデックス配列
-const quadIndexArray = new Uint16Array(generateIndex());
-const indicesBuffer = g_device.createBuffer({
-  size: quadIndexArray.byteLength,
-  usage: GPUBufferUsage.INDEX,
-  mappedAtCreation: true,
-});
-//マップしたバッファデータをセット
-new Uint16Array(indicesBuffer.getMappedRange()).set(quadIndexArray);
-indicesBuffer.unmap();
-
-//Uniformバッファ
-const uniformBufferSize = 4*(3*4+16+1+1);
-  const uniformBuffer = g_device.createBuffer({
-    size: uniformBufferSize,
-    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-});
-var bufferPosition=0;
-function bind(a){
-const p=new Float32Array(a);
-g_device.queue.writeBuffer(
-  uniformBuffer,
-  bufferPosition,
-  p.buffer,
-  p.byteOffset,
-  p.byteLength
-);
-bufferPosition+=p.byteLength;
-}
-    bind(camera.position);
-    bind(light);
-    bind(z);
-    bind([view4D]);
-    bind([canvas.width/canvas.height]);
-
-//レンダーパイプラインの設定
-const pipeline = g_device.createRenderPipeline({
-  layout: 'auto',
-  vertex: {
-    module: g_device.createShaderModule({
-      code: WGSL,
-    }),
-    entryPoint: 'main',
-    buffers: [
-      {
-        arrayStride: 4*4,
-        attributes: [
-          {
-            shaderLocation: 0,
-            offset: 0,
-            format: 'float32x4',
-          }
-        ],
-      },
-        {//インスタンス
-       	  arrayStride: 4*28,
-          stepMode: 'instance',
-          attributes: [
-            {
-			  shaderLocation: 2,
-              offset: 0,
-              format: 'float32x4'
-            },
-            {
-            // color
-            shaderLocation: 1,
-            offset: 4*4,
-            format: 'float32x4',
-            },
-            {
-            // scale
-            shaderLocation: 3,
-            offset: 4*8,
-            format: 'float32x4',
-            },
-              //法線
-              {
-            shaderLocation: 4,
-            offset: 4*12,
-            format: 'float32x4',
-            },
-              {
-            shaderLocation: 5,
-            offset: 4*16,
-            format: 'float32x4',
-            },
-              {
-            shaderLocation: 6,
-            offset: 4*20,
-            format: 'float32x4',
-            },
-              {
-            shaderLocation: 7,
-            offset: 4*24,
-            format: 'float32x4',
-            }
-          ]
-        }
-    ],
-  },
-  fragment: {
-    module: g_device.createShaderModule({
-      code: WGSL,
-    }),
-    entryPoint: 'fragmain',
-    //canvasのフォーマットを指定
-    targets: [
-      {
-        format: presentationFormat,
-          //アルファブレンディング
-          
-        blend: {
-              color: {
-                srcFactor: 'one',
-                dstFactor: 'one-minus-src-alpha'
-              },
-              alpha: {
-                srcFactor: 'one',
-                dstFactor: 'one-minus-src-alpha'
-              },
-            },
-      },
-    ],
-  },
-  primitive: {
-    topology: 'triangle-list',
-  },
-    depthStencil: {
-      depthWriteEnabled: true,
-      depthCompare: 'less',
-      format: 'depth24plus',
-    },
-});
-
-//インスタンスバッファを作成
-const instancePositions=new Float32Array(inst);
-  const instancesBuffer = g_device.createBuffer({
-    size: instancePositions.byteLength,
-    usage: GPUBufferUsage.VERTEX,
-    mappedAtCreation: true,
-  });
-  new Float32Array(instancesBuffer.getMappedRange()).set(instancePositions);
-  instancesBuffer.unmap();
-
-//バインドグループを作成
-const bindGroup = g_device.createBindGroup({
-  layout: pipeline.getBindGroupLayout(0),
-  entries: [
-    {
-      binding: 0,
-      resource: {
-        buffer: uniformBuffer,
-      },
-    },
-  ],
-});
-//コマンドバッファの作成
-const commandEncoder = g_device.createCommandEncoder();
-//レンダーパスの設定
-const textureView = context.getCurrentTexture().createView();
-  const renderPassDescriptor= {
-    colorAttachments: [
-      {
-        view: textureView,
-        clearValue:{ r: 0.8, g: 1.0, b: 0.95, a: 1.0 },
-        loadOp: 'clear',
-        storeOp: 'store',
-      },
-    ],
-      //depthStencil
-    depthStencilAttachment: {
-      view: depthTexture.createView(),
-      depthClearValue: 1,
-      depthLoadOp: 'clear',
-      depthStoreOp: 'store',
-    },
-  };
-  const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
-
-  //レンダーパイプラインを与える
-  passEncoder.setPipeline(pipeline);
-  passEncoder.setBindGroup(0, bindGroup);
-  passEncoder.setVertexBuffer(0, verticesBuffer);
-  passEncoder.setIndexBuffer(indicesBuffer, 'uint16');
-  passEncoder.setVertexBuffer(1, instancesBuffer);
-  passEncoder.drawIndexed(quadIndexArray.length,Math.floor(instancePositions.length/28));
-  passEncoder.end();
-  g_device.queue.submit([commandEncoder.finish()]);
-    requestAnimationFrame(render);
-    translate();
-}
-    render();
+wgpu.bindvertex(vertex);
+wgpu.bindindex(generateIndex());
+async function main(){
+    await wgpu.initialize(canvas,["float32x4"],["float32x4","float32x4","float32x4","float32x4","float32x4","float32x4","float32x4"]);
+    function gameloop(){
+        translate();
+        wgpu.uniform=[...camera.position,...light,...z,view4D,canvas.width/canvas.height,0,0];
+        wgpu.render(inst);
+        hojoscreen();
+        requestAnimationFrame(gameloop);
+    }
+    gameloop();
 }

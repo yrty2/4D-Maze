@@ -1,8 +1,9 @@
+var walked=[];
 var seed=Math.random();
 var air=[];
 var worktime=0;
 var gamemode="4D";
-const map=[];
+var map=[];
 var scale=8;
 var glass={
     value:0,
@@ -16,13 +17,15 @@ var win=false;
 var goalPosition=[0,0,0,0];
 var goalijkh=[0,0,0,0];
 const algorithm="boutaoshi";
+const game={
+    
+}
 const kagi={
     amount:5,
     value:0,
     list:[]
 }
-
-const player={
+var player={
     position:[0,0,0,0],
     ijkh:[0,0,0,0],
     toijkh:[0,0,0,0]
@@ -109,23 +112,36 @@ function boutaoshi(){
             for(let j=2; j<scale-1; j+=2){
                 for(let k=2; k<scale-1; k+=2){
                     for(let h=2; h<scale-1; h+=2){
-                bou.push([i,j,k,h]);
+                bou.push({ijkh:[i,j,k,h],hasi:scale%2==0 && k>=scale-3,hasi2:scale%2==0 && h>=scale-3});
                     }
                 }
             }
         }
     }
     createbou();
-    for(const b of bou){
+    for(const d of bou){
+        const b=d.ijkh;
         var v=-1;
         if(b[3]==2){
+            if(d.hasi2){
+                v=[0,0,math.randSign(),0];
+            }else if(d.hasi){
+                v=[0,0,0,math.randSign()];
+            }else{
             v=get4RandomVector();
+                }
             const m=map.findIndex(e=>e.ijkh.join()==vec.sum(b,v).join());
             if(m!=-1){
                 map[m].michi=false;
             }
         }else{
+            if(d.hasi2){
+                v=[0,0,math.randSign(),0];
+            }else if(d.hasi){
+                v=[0,0,0,math.randSign()];
+            }else{
             v=get3RandomVector();
+            }
             const m=map.findIndex(e=>e.ijkh.join()==vec.sum(b,v).join());
             if(m!=-1){
                 map[m].michi=false;
@@ -180,43 +196,6 @@ function randomAkeru(amount){
     }
 }
 const ways=[];
-function anahori(amount){
-    var goalCreated=false;
-    //穴掘り法
-    var t=vec.prod([1,1,1,1],Math.floor(scale/2));
-    var loop=0;
-    while(loop<amount){
-        var connect=getRandomVector();
-        const m=map.findIndex(e=>e.ijkh.join()==vec.sum(t,connect).join());
-        const m2=map.findIndex(e=>e.ijkh.join()==vec.sum(t,vec.prod(connect,2)).join());
-        if(m2!=-1 && !map[m2].michi && map[m2].ijkh[0]>0 && map[m2].ijkh[1]>0 && map[m2].ijkh[2]>0 && map[m2].ijkh[3]>0 && map[m2].ijkh[0]<scale-1 && map[m2].ijkh[1]<scale-1 && map[m2].ijkh[2]<scale-1 && map[m2].ijkh[3]<scale-1){
-            map[m].michi=true;
-            map[m2].michi=true;
-            ways.push(m2);
-            t=vec.sum(t,vec.prod(connect,2));
-        }else if(m2!=-1 && map[m2].michi && kagi.amount>kagi.value){
-            if(Math.random()<0.2){
-            putKey(map[m2].position,map[m2].ijkh);
-            kagi.value++;
-            }else if(!goalCreated){
-        goalCreated=true;
-        goalPosition=map[m2].position;
-        coloredWireframe(vec.sum(goalPosition,vec.prod([1,1,1,1],boxsize/2)),boxsize,0.5,{name:"goal"});
-            }
-        }else{
-            if(ways.length>0){
-            t=map[ways[math.randInt(0,ways.length-1)]].ijkh.slice();
-            loop++;
-            }
-        }
-    }
-    if(!goalCreated){
-        const w=ways[math.randInt(0,ways.length-1)];
-        goalCreated=true;
-        goalPosition=map[w].position;
-        coloredWireframe(vec.sum(goalPosition,vec.prod([1,1,1,1],boxsize/2)),boxsize,0.5,{name:"goal"});
-    }
-}
 function createKabe(){
     for(const m of map){
         if(!m.michi){
@@ -296,4 +275,11 @@ function putKey(p,ijkh){
     hypercube(vec.sum(vec.sum(p,vec.prod([1,1,1,1],boxsize/2-1/3)),[0,-1,0,0]),[2/3,3,2/3,2/3],C,{name:"kagi",ijkh:ijkh});
     hypercube(vec.sum(vec.sum(p,vec.prod([1,1,1,1],boxsize/2)),[1/3,-5/4,-1/3,0]),[1/2,1/2,2/3,1],C,{name:"kagi",ijkh:ijkh});
     hypercube(vec.sum(vec.sum(p,vec.prod([1,1,1,1],boxsize/2)),[1/3,-1/2,-1/3,0]),[1/2,1/2,2/3,1],C,{name:"kagi",ijkh:ijkh});
+}
+function saveMaze(){
+    const a=document.createElement('a');
+    a.download=`4D Maze ${Date.now().toString(16)}.json`;
+    var blob = new Blob([`${JSON.stringify({map:map,player:player})}`], { type: 'text/plain' });
+        a.href=URL.createObjectURL(blob);
+        a.click();
 }
