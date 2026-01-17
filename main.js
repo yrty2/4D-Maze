@@ -45,6 +45,7 @@ function start(){
     canvas.height=screen.height+1;
     overcanva.width=screen.width;
     overcanva.height=screen.height;
+    hojo=hojoavailable;
     generateMaze(scale);
     main();
     startTime=Date.now();

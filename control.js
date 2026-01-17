@@ -1,6 +1,6 @@
 const marks=[];
 var moveSeed=-1;
-var hojo=false;
+var hojo=true;
 var rotortime=17;
 var rotor=[];
 function frame(){
